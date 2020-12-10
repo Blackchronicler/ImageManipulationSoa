@@ -1,0 +1,64 @@
+### Getting image from folder
+from PIL import Image
+im = Image.open('C:/Users/...')
+
+### importing necessary libraries
+import numpy as np
+import pandas as pd
+
+### Converting image to numpy array
+imageSoa = np.array(im)
+print(imageSoa,  '\n')
+
+### Changing parts of numpy array
+new_imageSoa = np.where(imageSoa ==4, 0.1, imageSoa)
+new_imageSoa = np.where(imageSoa ==3, 0.3, new_imageSoa)
+new_imageSoa = np.where(imageSoa ==5, 0.3, new_imageSoa)
+new_imageSoa = np.where(imageSoa ==1, 0.4, new_imageSoa)
+new_imageSoa = np.where(imageSoa ==8, 0.5, new_imageSoa)
+
+np.savetxt('modified_Soa.txt', new_imageSoa,fmt='%f' ) #Saves modified image as txt file
+
+print('This is the modified array', '\n')
+print(new_imageSoa,  '\n' )
+
+### Saving array as ASCII file
+modified_Soa = new_imageSoa
+#print(modified_Soa)   #activate for testing or validation purposes 
+np.savetxt('modifiedSoa.ascii',modified_Soa,fmt='%f')
+
+# ----------------------------------------------------------------------------------#
+
+### Convert array into DataFrame
+originalSoa = pd.DataFrame(imageSoa)
+modifiedSoa = pd.DataFrame(new_imageSoa)
+#print(originalSoa) #activate for testing or validation purposes
+#print(modifiedSoa) #activate for testing or validation purposes
+
+### Saving Dataframe as Excel file
+originalSoa.to_excel("OriginalSoa.xlsx")
+modifiedSoa.to_excel("ModifiedSoa.xlsx")
+
+### Combining both into one Excelfile
+with pd.ExcelWriter('Soa.xlsx') as writer:  
+    originalSoa.to_excel(writer, sheet_name='Original Soa')
+    modifiedSoa.to_excel(writer, sheet_name='Modified Soa')
+
+### Visualisation and Plotting of Dataframes
+from matplotlib import pyplot
+
+pyplot.contourf(originalSoa)
+pyplot.contourf(modifiedSoa)
+
+### Reading, modifying and converting xlsx file to ASCII file
+modifiedImage = pd.read_excel('C:\\Users\...')
+soa_array = modifiedImage.to_numpy()
+r,c = np.shape(soa_array)
+#print(c)  #activate for testing or validation purposes
+#print(np.shape(soa_array)) #activate for testing or validation purposes
+
+new_soa_array = soa_array[:,1:c]  #deletes index before saving otherwise error when exported
+#print(new_soa_array) #activate for testing or validation purposes
+#print(np.shape(new_soa_array)) #activate for testing or validation purposes
+
+np.savetxt('modifiedSoaExcel.ascii',new_soa_array,fmt='%f')
